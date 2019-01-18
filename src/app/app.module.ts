@@ -7,11 +7,15 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { from } from 'rxjs';
 import { environment } from 'src/environments/environment.prod';
+import { HomeComponent } from './home/home.component';
+import { PostComponent } from './home/post/post.component';
 
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    HomeComponent,
+    PostComponent
   ],
   imports: [
     BrowserModule,
