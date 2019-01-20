@@ -1,8 +1,10 @@
-import {Component} from '@angular/core';
-import {AngularFireDatabase} from 'angularfire2/database';
+import {Component, OnInit} from '@angular/core';
+import {AngularFireDatabase, AngularFireList} from 'angularfire2/database';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
 import {formatDate} from '@angular/common';
+import {Course} from './model/course';
+
 
 
 @Component({
@@ -10,31 +12,46 @@ import {formatDate} from '@angular/common';
              templateUrl: './app.component.html',
              styleUrls: ['./app.component.css']
            })
-export class AppComponent {
-
+export class AppComponent implements OnInit {
   courses$;
-  course$;
-  uploadImages: string[] = [];
+
+  course$: AngularFireList<Course> = null;
+  uploadCourses: any = [];
   basePath = '/uploads';
   file: File;
-
-
   // todos$: AngularFireList<any[]>;
   today = new Date();
 
 
   // add(value){
 
+
   //   const cour=this.db.list("/coures");
   //   cour.push(value);
   // }
+
   jstoday = '';
 
 
   constructor(private db: AngularFireDatabase) {
+
     this.courses$ = db.list(this.basePath).valueChanges();
-    console.log(this.courses$);
   }
+
+
+  ngOnInit() {
+    this.course$ = this.db.list('/course');
+
+    this.db.list('/course').valueChanges()
+        .subscribe(res => {
+          // console.log(res);
+          this.uploadCourses = res;
+          console.log(this.uploadCourses);
+        });
+
+    console.log(this.course$);
+  }
+
 
 
   progress(event) {
@@ -61,7 +78,11 @@ export class AppComponent {
                     // success
                     uploadTask.snapshot.ref.getDownloadURL().then(downloadURL => {
                       console.log('File available at', downloadURL);
-                      this.uploadImages.push(downloadURL);
+                      const course = new Course(downloadURL);
+
+                      console.log(course);
+                      this.course$.push(course);
+                      // this.uploadImages.push(downloadURL);
                     });
                   });
 
